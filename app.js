@@ -35,16 +35,12 @@ window.addEventListener('keyup', function (e) {
     111  // keypad divide
   ]
 
+  // numbers and several operation keys
+  var isNumKeys = e.keyCode >= 48 && e.keyCode <= 57
+  var isOperationKeys = operationKeys.indexOf(e.keyCode) > -1
   var operators = ['+', '-', '*', '/', '^', '(', ')', '.']
 
-  // numbers and several operation keys
-  if (e.keyCode >= 48 && e.keyCode <= 57) {
-    if (isNaN(Number(e.key)) && operators.indexOf(e.key) === -1) return
-    state.expression += e.key
-    update()
-  }
-
-  if (operationKeys.indexOf(e.keyCode) > -1) {
+  if (isNumKeys || isOperationKeys) {
     if (isNaN(Number(e.key)) && operators.indexOf(e.key) === -1) return
     state.expression += e.key
     update()
@@ -62,15 +58,12 @@ function update () {
   state.splitExpression = state.expression.match(/[^\d()]+|[()]+|[\d.]+/g) || []
   var lastToken = state.splitExpression[state.splitExpression.length - 1]
   var secondToLastToken = state.splitExpression[state.splitExpression.length - 2]
-  var tmp
 
   // don't do anything if we are missing an expression
-  if (!state.splitExpression) {
-    return
-  }
+  if (!state.splitExpression) return
 
   if (secondToLastToken === '.') {
-    tmp = state.splitExpression.pop()
+    var tmp = state.splitExpression.pop()
     state.splitExpression.pop()
     state.splitExpression.push('0.' + tmp)
   }
